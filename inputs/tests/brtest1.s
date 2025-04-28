@@ -30,7 +30,7 @@ l_3:
         addiu $5, $5, 5
         bgez $zero, l_6
 l_4:
-        # Not taken
+        # Not taken #Taken
         addiu $5, $5, 11
         blez  $3, l_3
 l_5:

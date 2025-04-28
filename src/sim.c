@@ -59,13 +59,13 @@ void process_instruction()
 void execute_r_type(uint32_t rs, uint32_t rt, uint32_t rd, uint32_t shamt, uint32_t funct)
 {
     switch (funct) {
-
+	//Arithmetic
 	case ADD:
     	    NEXT_STATE.REGS[rd] = (int32_t)CURRENT_STATE.REGS[rs] + (int32_t)CURRENT_STATE.REGS[rt];
     	    break;
 
 	case ADDU:
-    	    NEXT_STATE.REGS[rd] = CURRENT_STATE.REGS[rs] + CURRENT_STATE.REGS[rt];
+    	    NEXT_STATE.REGS[rd] = (int32_t)CURRENT_STATE.REGS[rs] + (int32_t)CURRENT_STATE.REGS[rt];
     	    break;
 
 	case SUB:
@@ -73,9 +73,9 @@ void execute_r_type(uint32_t rs, uint32_t rt, uint32_t rd, uint32_t shamt, uint3
     	    break;
 
 	case SUBU:
-    	    NEXT_STATE.REGS[rd] = CURRENT_STATE.REGS[rs] - CURRENT_STATE.REGS[rt];
+    	    NEXT_STATE.REGS[rd] = (int32_t)CURRENT_STATE.REGS[rs] - (int32_t)CURRENT_STATE.REGS[rt];
     	    break;
-
+	//Logical
 	case AND:
     	    NEXT_STATE.REGS[rd] = CURRENT_STATE.REGS[rs] & CURRENT_STATE.REGS[rt];
     	    break;
@@ -91,15 +91,15 @@ void execute_r_type(uint32_t rs, uint32_t rt, uint32_t rd, uint32_t shamt, uint3
 	case NOR:
     	    NEXT_STATE.REGS[rd] = ~(CURRENT_STATE.REGS[rs] | CURRENT_STATE.REGS[rt]);
    	    break;
-
+	//Set
         case SLT:
             NEXT_STATE.REGS[rd] = ((int32_t)CURRENT_STATE.REGS[rs] < (int32_t)CURRENT_STATE.REGS[rt]) ? 1 : 0;
             break;
 
         case SLTU:
-            NEXT_STATE.REGS[rd] = (CURRENT_STATE.REGS[rs] < (uint32_t)CURRENT_STATE.REGS[rt]) ? 1 : 0;
+            NEXT_STATE.REGS[rd] = (CURRENT_STATE.REGS[rs] < CURRENT_STATE.REGS[rt]) ? 1 : 0;
             break;
-
+	//Shift
 	case SLL:
     	    NEXT_STATE.REGS[rd] = CURRENT_STATE.REGS[rt] << shamt;
     	    break;
@@ -113,7 +113,7 @@ void execute_r_type(uint32_t rs, uint32_t rt, uint32_t rd, uint32_t shamt, uint3
     	    break;
 
 	case SLLV:
-    	    NEXT_STATE.REGS[rd] = CURRENT_STATE.REGS[rt] << (CURRENT_STATE.REGS[rs] & 0x1F);
+    	    NEXT_STATE.REGS[rd] = CURRENT_STATE.REGS[rt] << (CURRENT_STATE.REGS[rs] & 0x1F);//5bits
     	    break;
 
 	case SRLV:
@@ -123,7 +123,7 @@ void execute_r_type(uint32_t rs, uint32_t rt, uint32_t rd, uint32_t shamt, uint3
 	case SRAV:
     	    NEXT_STATE.REGS[rd] = ((int32_t)CURRENT_STATE.REGS[rt]) >> (CURRENT_STATE.REGS[rs] & 0x1F);
     	    break;
-
+	//Jump
 	case JR:
     	    NEXT_STATE.PC = CURRENT_STATE.REGS[rs];
 	    pc_set_by_instruction = 1;
@@ -137,20 +137,20 @@ void execute_r_type(uint32_t rs, uint32_t rt, uint32_t rd, uint32_t shamt, uint3
             NEXT_STATE.PC = CURRENT_STATE.REGS[rs];       
             pc_set_by_instruction = 1;                    
             break;
-
+	//Mult,Div
 	case MULT: 
 	{
     		int64_t result = (int64_t)(int32_t)CURRENT_STATE.REGS[rs] * (int64_t) (int32_t)CURRENT_STATE.REGS[rt];
-    		NEXT_STATE.HI = (uint32_t)((result >> 32) & 0xFFFFFFFF);
-    		NEXT_STATE.LO = (uint32_t)(result & 0xFFFFFFFF);
+    		NEXT_STATE.HI = (uint32_t)(result >> 32);
+    		NEXT_STATE.LO = (uint32_t)result;
     		break;
 	}
 
 	case MULTU: 
 	{
     		uint64_t result = (uint64_t)CURRENT_STATE.REGS[rs] * (uint64_t) CURRENT_STATE.REGS[rt];
-    		NEXT_STATE.HI = (uint32_t)((result >> 32) & 0xFFFFFFFF);
-    		NEXT_STATE.LO = (uint32_t)(result & 0xFFFFFFFF);
+    		NEXT_STATE.HI = (uint32_t)(result >> 32);
+    		NEXT_STATE.LO = (uint32_t)result;
     		break;
 	}
 	
@@ -168,16 +168,14 @@ void execute_r_type(uint32_t rs, uint32_t rt, uint32_t rd, uint32_t shamt, uint3
 	}
 
 	case DIVU: 
-	{
         	NEXT_STATE.LO = CURRENT_STATE.REGS[rs] / CURRENT_STATE.REGS[rt];
         	NEXT_STATE.HI = CURRENT_STATE.REGS[rs] % CURRENT_STATE.REGS[rt];
     		break;
-	}
-
+	//Move
 	case MFHI:
     		NEXT_STATE.REGS[rd] = CURRENT_STATE.HI;
     		break;
-
+	
 	case MFLO:
     		NEXT_STATE.REGS[rd] = CURRENT_STATE.LO;
     		break;
@@ -189,7 +187,7 @@ void execute_r_type(uint32_t rs, uint32_t rt, uint32_t rd, uint32_t shamt, uint3
 	case MTLO:
     		NEXT_STATE.LO = CURRENT_STATE.REGS[rs];
     		break;
-
+	//SYSCALL
         case SYSCALL:
             if (CURRENT_STATE.REGS[2] == 10) {
                 printf("SYSCALL exit requested.\n");
@@ -251,7 +249,7 @@ void execute_regimm(uint32_t rt, uint32_t rs, int16_t imm)
 
 void execute_j_type(uint32_t opcode, uint32_t target)
 {
-    uint32_t jump_addr = (CURRENT_STATE.PC & 0xF0000000) | (target << 2);
+    uint32_t jump_addr = (CURRENT_STATE.PC & 0xF0000000) | (target << 2);//absolute address
 
     switch (opcode) {
         case J:
@@ -259,7 +257,7 @@ void execute_j_type(uint32_t opcode, uint32_t target)
             break;
 
         case JAL:
-            NEXT_STATE.REGS[31] = CURRENT_STATE.PC + 4;  
+            NEXT_STATE.REGS[31] = CURRENT_STATE.PC + 4; //$ra 
             NEXT_STATE.PC = jump_addr;
             break;
 	
@@ -273,6 +271,7 @@ void execute_j_type(uint32_t opcode, uint32_t target)
 void execute_i_type(uint32_t opcode, uint32_t rs, uint32_t rt, int16_t imm)
 {
     switch (opcode) {
+	//Arithmetic
         case ADDI:
 	    if(rt != 0) { //avoid modifying $zero
             	NEXT_STATE.REGS[rt] = (int32_t)CURRENT_STATE.REGS[rs] + (int32_t)imm;
@@ -284,7 +283,7 @@ void execute_i_type(uint32_t opcode, uint32_t rs, uint32_t rt, int16_t imm)
             	NEXT_STATE.REGS[rt] = (int32_t)CURRENT_STATE.REGS[rs] + (int32_t)imm;
             }
 	    break;
-
+	//Set
         case SLTI:
             NEXT_STATE.REGS[rt] = ((int32_t)CURRENT_STATE.REGS[rs] < (int32_t)imm) ? 1 : 0;
             break;
@@ -292,9 +291,9 @@ void execute_i_type(uint32_t opcode, uint32_t rs, uint32_t rt, int16_t imm)
 	case SLTIU:
             NEXT_STATE.REGS[rt] = (CURRENT_STATE.REGS[rs] < (uint32_t)imm) ? 1 : 0;
     	    break;
-
+	//Logical
 	case ANDI:
-	    NEXT_STATE.REGS[rt] = CURRENT_STATE.REGS[rs] & (uint32_t)(imm & 0xFFFF);
+	    NEXT_STATE.REGS[rt] = CURRENT_STATE.REGS[rs] & (uint32_t)(imm & 0xFFFF); //zero-extend
     	    break;
 
 	case ORI:
@@ -304,11 +303,7 @@ void execute_i_type(uint32_t opcode, uint32_t rs, uint32_t rt, int16_t imm)
 	case XORI:
     	    NEXT_STATE.REGS[rt] = CURRENT_STATE.REGS[rs] ^ (uint32_t)(imm & 0xFFFF);
     	    break;
-
-	case LUI:
-            NEXT_STATE.REGS[rt] = (uint32_t)imm << 16;
-    	    break;
-
+	//Branch
 	case BEQ:
     	    if (CURRENT_STATE.REGS[rs] == CURRENT_STATE.REGS[rt]) {
             	int32_t branch_offset = (int32_t)(imm) << 2;  
@@ -340,6 +335,10 @@ void execute_i_type(uint32_t opcode, uint32_t rs, uint32_t rt, int16_t imm)
         	pc_set_by_instruction = 1;  
     	    }
     	    break;
+	//Load
+	case LUI:
+            NEXT_STATE.REGS[rt] = (uint32_t)imm << 16;
+    	    break;
 
 	case LW:
 	    {
@@ -361,7 +360,7 @@ void execute_i_type(uint32_t opcode, uint32_t rs, uint32_t rt, int16_t imm)
     		uint32_t word = mem_read_32(address & ~0x3); //word align  
     		uint16_t halfword;
     		if (address & 0x2) { 
-        		halfword = (word >> 16) & 0xFFFF; //uppers address[1]=1 2,6,10,14
+        		halfword = (word >> 16) & 0xFFFF; //uppers address[1]=1:2,3,6,7,10,11
     		} else {
         		halfword = word & 0xFFFF;         
     		}
@@ -417,7 +416,7 @@ void execute_i_type(uint32_t opcode, uint32_t rs, uint32_t rt, int16_t imm)
 	    {
     		uint32_t address = (int32_t)CURRENT_STATE.REGS[rs] + (int32_t)imm;
 		uint32_t aligned_address = address & ~0x3;
-    		uint32_t word = mem_read_32(aligned_address); //stored before
+    		uint32_t word = mem_read_32(aligned_address); 
     		uint16_t data = CURRENT_STATE.REGS[rt] & 0xFFFF;
 		if (address & 0x2) {
         		word = (word & 0x0000FFFF) | (data << 16); 
@@ -432,7 +431,7 @@ void execute_i_type(uint32_t opcode, uint32_t rs, uint32_t rt, int16_t imm)
 	    {
     		uint32_t address = (int32_t)CURRENT_STATE.REGS[rs] + (int32_t)imm;
 		uint32_t aligned_address = address & ~0x3;
-    		uint32_t word = mem_read_32(aligned_address); //stored before
+    		uint32_t word = mem_read_32(aligned_address);
     		uint8_t data = CURRENT_STATE.REGS[rt] & 0xFF;
     		switch (address & 0x3) {
         		case 0:
@@ -458,3 +457,5 @@ void execute_i_type(uint32_t opcode, uint32_t rs, uint32_t rt, int16_t imm)
     }
 }
 
+
+/*Improvements-Hardcoded constants,Branch instruction as function,word & 0xFFFF;Store and load*/

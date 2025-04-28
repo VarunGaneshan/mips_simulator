@@ -12,7 +12,7 @@ l_0:
         addiu $5, $zero, 100
         syscall        
 l_1:
-        bne $zero, $zero, l_3
+        bne $zero, $zero, l_3 #not true
         ori $0, $0, 0
         ori $0, $0, 0
         addiu $6, $zero, 0x1337
