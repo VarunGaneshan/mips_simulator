@@ -69,7 +69,7 @@ void execute_r_type(uint32_t rs, uint32_t rt, uint32_t rd, uint32_t shamt, uint3
     	    break;
 
 	case SUB:
-    	    NEXT_STATE.REGS[rd] = (int32_t)CURRENT_STATE.REGS[rs] -(int32_t)CURRENT_STATE.REGS[rt];
+    	    NEXT_STATE.REGS[rd] = (int32_t)CURRENT_STATE.REGS[rs] - (int32_t)CURRENT_STATE.REGS[rt];
     	    break;
 
 	case SUBU:
@@ -225,16 +225,16 @@ void execute_regimm(uint32_t rt, uint32_t rs, int16_t imm)
             break;
 
         case BLTZAL:
+	    NEXT_STATE.REGS[31] = CURRENT_STATE.PC + 4;
             if ((int32_t)CURRENT_STATE.REGS[rs] < 0) {
-	        NEXT_STATE.REGS[31] = CURRENT_STATE.PC + 4;
                 NEXT_STATE.PC = CURRENT_STATE.PC + offset;
 		pc_set_by_instruction = 1;
             }
             break;
 
         case BGEZAL:
+	    NEXT_STATE.REGS[31] = CURRENT_STATE.PC + 4;
             if ((int32_t)CURRENT_STATE.REGS[rs] >= 0) {
-		NEXT_STATE.REGS[31] = CURRENT_STATE.PC + 4;
                 NEXT_STATE.PC = CURRENT_STATE.PC + offset;
 		pc_set_by_instruction = 1;
             }
