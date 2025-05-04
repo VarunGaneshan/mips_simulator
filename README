@@ -1,15 +1,19 @@
-#MIPS Instruction-Level Simulator
+# MIPS Instruction-Level Simulator
 
 This project is a C-based instruction-level simulator for a subset of the MIPS architecture. It mimics the execution of MIPS assembly code by implementing instruction parsing, memory access, and register updates.
+
 ---
 
 ## 📁 Project Structure
-    ├── src
-        ├── shell.c # Main simulator logic
-        ├── shell.h # Global variables and state
-        ├── mips_opcodes.h # Opcode and funct macro definitions
-    ├── inputs
-        ├── *.s # MIPS assembly test programs
+
+```plaintext
+├── src
+│   ├── shell.c          # Main simulator logic
+│   ├── shell.h          # Global variables and state
+│   ├── mips_opcodes.h   # Opcode and funct macro definitions
+├── inputs
+│   ├── *.s              # MIPS assembly test programs
+```
 
 ---
 
@@ -39,18 +43,20 @@ This project is a C-based instruction-level simulator for a subset of the MIPS a
 ## 🛠️ Compilation and Run
 
 ```bash
-0. Modify the path of spim in asm2hex file.(spim is will be under path/spisimulator/spim/)
+0. Modify the path of spim in asm2hex file. (spim will be under path/spisimulator/spim/)
 
 1. For converting .s to .x
 ./asm2hex name.s
 
-2. For compiling sim.c(Refer Makefile)
+2. For compiling sim.c (Refer Makefile)
 make clean
 make
 
 3. To run the hex file in simulator
 ./src/sim inputs/name.x
+```
 
+```text
 >> MIPS Simulator
 >> 
 >> Read x words from program into memory.
@@ -58,4 +64,5 @@ make
 >> MIPS-SIM> go
 >> 
 >> Simulating...
-Use go,run 1,rdump commands to verify your outputs.
+```
+Use `go`, `run 1`, `rdump` commands to verify your outputs.
