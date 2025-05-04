@@ -1,4 +1,4 @@
-# MIPS Instruction-Level Simulator
+#MIPS Instruction-Level Simulator
 
 This project is a C-based instruction-level simulator for a subset of the MIPS architecture. It mimics the execution of MIPS assembly code by implementing instruction parsing, memory access, and register updates.
 ---
