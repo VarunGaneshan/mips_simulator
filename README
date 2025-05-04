@@ -1,54 +1,61 @@
-/*** Files ***/
+# MIPS Instruction-Level Simulator
 
-1. "src/" subdirectory 
-- The shell: "shell.h", "shell.c" (DO NOT MODIFY)
-- The simulator skeleton: "sim.c" (MODIFY)
+This project is a C-based instruction-level simulator for a subset of the MIPS architecture. It mimics the execution of MIPS assembly code by implementing instruction parsing, memory access, and register updates.
+---
 
-2. "inputs/" subdirectory 
-- Test inputs for the simulator (MIPS assembly code): "*.s"
-- MIPS assembler/hexdump (assembly code -> machine code -> hexdump): "asm2hex"
+## 📁 Project Structure
+    ├── src
+        ├── shell.c # Main simulator logic
+        ├── shell.h # Global variables and state
+        ├── mips_opcodes.h # Opcode and funct macro definitions
+    ├── inputs
+        ├── *.s # MIPS assembly test programs
 
-/*** Instructions ***/
+---
 
-0. Install spsim
+## 🚀 Features
 
-> git clone https://github.com/mbits-mirafra/spisimulator.git
-> cd spisimulator/spim
-> make
+- Supports **R-type, I-type, and J-type** instructions.
+- Handles arithmetic, logical, shift, memory, and branch operations.
+- Implements special registers: **HI, LO, and $ra (return address)**.
+- Supports `syscall` for halting simulation.
+- Simulates a **little-endian memory** model.
+- This project does not handle Branch delay slots and exceptions.
 
-This should create a spim executable at this path.
+---
 
-Modify inputs/asm2hex to put the right path for spim.
+## 🧠 Supported Instructions
 
-1. Modify "sim.c" to implement the MIPS instruction set. Run "make" to compile the simulator.
+- **Arithmetic**: `add`, `addu`, `sub`, `subu`, `mult`, `multu`, `div`, `divu`
+- **Logical**: `and`, `or`, `xor`, `nor`
+- **Shift**: `sll`, `srl`, `sra`, `sllv`, `srlv`, `srav`
+- **Set-on-compare**: `slt`, `sltu`, `slti`, `sltiu`
+- **Load/Store**: `lw`, `sw`, `lh`, `lhu`, `lb`, `lbu`, `sh`, `sb`, `lui`
+- **Branch/Jump**: `beq`, `bne`, `bgtz`, `blez`, `jr`, `jal`, `jalr`, `j`, `bltz`, `bgez`, `bltzal`, `bgezal`
+- **Syscall**
 
-$ cd src/
-$ make
+---
 
-You should now have an executable file named "sim".
+## 🛠️ Compilation and Run
 
+```bash
+0. Modify the path of spim in asm2hex file.(spim is will be under path/spisimulator/spim/)
 
-2. Use "asm2hex" to convert the test inputs ("*.s") into hexdumps of assembled
-machine code ("*.x").
+1. For converting .s to .x
+./asm2hex name.s
 
-$ cd inputs/
-$ ./asm2hex addiu.s
+2. For compiling sim.c(Refer Makefile)
+make clean
+make
 
-You should now have a hexdump of the assembled machine code "addiu.x". Repeat
-this step for the rest of the test inputs.
-
-
-3. Run the hexdump in the simulator.
-
-$ ./src/sim inputs/addiu.x
+3. To run the hex file in simulator
+./src/sim inputs/name.x
 
 >> MIPS Simulator
 >> 
->> Read 7 words from program into memory.
+>> Read x words from program into memory.
 >> 
 >> MIPS-SIM> go
 >> 
 >> Simulating...
-
-Right now, the simulator will become unresponsive because it has not been
-implemented yet (that is your job!). Press Control+C to exit the simulator.
+Use go,run 1,rdump commands to verify your outputs.
