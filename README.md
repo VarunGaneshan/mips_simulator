@@ -8,11 +8,11 @@ This project is a C-based instruction-level simulator for a subset of the MIPS a
 
 ```plaintext
 ├── src
-│   ├── shell.c          # Main simulator logic
-│   ├── shell.h          # Global variables and state
-│   ├── mips_opcodes.h   # Opcode and funct macro definitions
+    ├── shell.c          # Main simulator logic
+    ├── shell.h          # Global variables and state
+    ├── mips_opcodes.h   # Opcode and funct macro definitions
 ├── inputs
-│   ├── *.s              # MIPS assembly test programs
+    ├── *.s              # MIPS assembly test programs
 ```
 
 ---
@@ -54,9 +54,6 @@ make
 
 3. To run the hex file in simulator
 ./src/sim inputs/name.x
-```
-
-```text
 >> MIPS Simulator
 >> 
 >> Read x words from program into memory.
